@@ -13,7 +13,7 @@ type sack struct {
 	sharedItem int
 }
 
-func Day3Part1() int {
+func Part1() int {
 	sacks := read()
 	fmt.Println(sacks)
 
@@ -26,7 +26,7 @@ func Day3Part1() int {
 	return totalScore
 }
 
-func Day3Part2() int {
+func Part2() int {
 	sacks := read()
 	fmt.Println(sacks)
 

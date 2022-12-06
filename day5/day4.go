@@ -11,7 +11,7 @@ import (
 
 type stack []string
 
-func Day5Part1() string {
+func Part1() string {
 	stacks, instructions := read()
 	fmt.Println(stacks, instructions)
 
@@ -29,7 +29,7 @@ func Day5Part1() string {
 	return stacksTop
 }
 
-func Day5Part2() string {
+func Part2() string {
 	stacks, instructions := read()
 	fmt.Println(stacks, instructions)
 

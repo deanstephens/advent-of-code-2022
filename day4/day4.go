@@ -14,7 +14,7 @@ type cleaningRoster struct {
 	max int
 }
 
-func Day4Part1() int {
+func Part1() int {
 	cleaningRosters := read()
 	fmt.Println(cleaningRosters)
 
@@ -41,7 +41,7 @@ func Day4Part1() int {
 	return totalScore
 }
 
-func Day4Part2() int {
+func Part2() int {
 	cleaningRosters := read()
 	fmt.Println(cleaningRosters)
 

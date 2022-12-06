@@ -14,7 +14,7 @@ type elf struct {
 	calories int
 }
 
-func Day1Part1() int {
+func Part1() int {
 	elfs := read()
 	//fmt.Println(elfs)
 
@@ -33,7 +33,7 @@ func Day1Part1() int {
 	return maxCaloriesElf
 }
 
-func Day1Part2() int {
+func Part2() int {
 	elfs := read()
 	sort.Slice(elfs, func(i, j int) bool {
 		return elfs[i].calories > elfs[j].calories

@@ -14,7 +14,7 @@ type round struct {
 	score int
 }
 
-func Day2Part1() int {
+func Part1() int {
 	rounds := read()
 	fmt.Println(rounds)
 
@@ -27,7 +27,7 @@ func Day2Part1() int {
 	return totalScore
 }
 
-func Day2Part2() int {
+func Part2() int {
 	rounds := read()
 	fmt.Println(rounds)
 
