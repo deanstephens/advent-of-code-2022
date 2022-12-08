@@ -17,26 +17,55 @@ type directory struct {
 	totalSize       int
 }
 
-var totalSizeOfSmall = 0
-
-var ClosestDir = 1000000000000
+const MAX_FILE_SIZE_TO_FIND = 100000
+const AVAILABLE_DISK = 70000000 - 30000000
 
 func Part1() int {
 	rootDir := read()
 	recursivelyAddFileSizes(&rootDir)
-	//b := strings.Split(buffers[0].bufferString, "")
 
-	return totalSizeOfSmall
+	totalSmall := getTotalSmallDirectorySizes(&rootDir, MAX_FILE_SIZE_TO_FIND)
+
+	return totalSmall
 }
 
 func Part2() int {
 	rootDir := read()
 	recursivelyAddFileSizes(&rootDir)
 
-	required := rootDir.totalSize - (70000000 - 30000000)
-	cl := ClosestDir
-	fmt.Println(cl)
-	return required
+	requiredSpace := rootDir.totalSize - AVAILABLE_DISK
+	closestSubDir := getClosestSubDirSizeOverMin(&rootDir, requiredSpace)
+
+	return closestSubDir
+}
+
+func getTotalSmallDirectorySizes(dir *directory, size int) int {
+	totalSmallSize := 0
+	for _, nextDir := range dir.directories {
+		totalSmallSize += getTotalSmallDirectorySizes(nextDir, size)
+	}
+
+	if dir.totalSize < size {
+		totalSmallSize += dir.totalSize
+	}
+
+	return totalSmallSize
+}
+
+func getClosestSubDirSizeOverMin(dir *directory, min int) int {
+	closestSizeForAll := -1
+	for _, nextDir := range dir.directories {
+		smallSize := getClosestSubDirSizeOverMin(nextDir, min)
+		if smallSize != -1 && (smallSize < closestSizeForAll || closestSizeForAll == -1) {
+			closestSizeForAll = smallSize
+		}
+	}
+
+	if closestSizeForAll == -1 && dir.totalSize > min {
+		closestSizeForAll = dir.totalSize
+	}
+
+	return closestSizeForAll
 }
 
 func recursivelyAddFileSizes(dir *directory) int {
@@ -48,14 +77,6 @@ func recursivelyAddFileSizes(dir *directory) int {
 		totalSize += file
 	}
 	dir.totalSize = totalSize
-
-	if dir.totalSize < 100000 {
-		totalSizeOfSmall += dir.totalSize
-	}
-
-	if dir.totalSize > 2536714 && dir.totalSize < ClosestDir {
-		ClosestDir = dir.totalSize
-	}
 
 	return totalSize
 }
@@ -69,10 +90,6 @@ func read() directory {
 		files:           nil,
 		directories:     nil,
 		totalSize:       0,
-	}
-
-	directories := map[string]directory{
-		"/": rootDirectory,
 	}
 
 	currentDirectory = &rootDirectory
@@ -119,7 +136,6 @@ func read() directory {
 				directories:     nil,
 				totalSize:       0,
 			}
-			directories[fmt.Sprintf("%s%s/", currentDirectory.path, commands[1])] = newDirectory
 			currentDirectory.directories[commands[1]] = &newDirectory
 			break
 		default:
