@@ -1,6 +1,9 @@
 package utils
 
-import "math"
+import (
+	"math"
+	"regexp"
+)
 
 func Reverse[S ~[]E, E any](s S) []E {
 	r := s[:]
@@ -38,4 +41,14 @@ func GetMagnitudeAndDirection2d(p1 int, p2 int) (magnitude int, direction int) {
 	direction = diff / magnitude
 
 	return magnitude, direction
+}
+
+func FindNamedMatches(regex *regexp.Regexp, str string) map[string]string {
+	match := regex.FindStringSubmatch(str)
+
+	results := map[string]string{}
+	for i, name := range match {
+		results[regex.SubexpNames()[i]] = name
+	}
+	return results
 }
