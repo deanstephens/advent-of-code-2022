@@ -211,21 +211,65 @@ func Part1() int {
 func Part2() int {
 	c := chamber{}
 
-	c.jetPatterns = read(true)
+	c.jetPatterns = read(false)
 
 	c.init()
 
-	for i := 0; i < 1000000000000; i++ {
-		if i%100000 == 0 {
-			fmt.Println(i)
+	resp := c.findRepeatingPatternIndex(1000000000000)
+
+	return resp.totalHeight
+}
+
+type repeatingPattern struct {
+	indexStart      int
+	indexEnd        int
+	heightAtStart   int
+	heightAtEnd     int
+	remainder       int
+	repeatingHeight int
+	totalHeight     int
+}
+
+func (c chamber) findRepeatingPatternIndex(num int) *repeatingPattern {
+	heights := []int{}
+	patterns := map[string][]int{}
+	for i := 0; i < 1000000; i++ {
+		currentHeight := c.highestRock
+		heights = append(heights, currentHeight)
+		c.dropRock(false, 30)
+		minDepth := c.highestRock - 24
+		if minDepth < 0 {
+			minDepth = 0
 		}
-		c.dropRock(true, 30)
-		if c.isFlat() {
-			fmt.Println("Is flat", i)
+		rockFormationString := ""
+		for row := c.highestRock - 1; row >= minDepth; row-- {
+			for col := 0; col < 7; col++ {
+				rockFormationString += c.getDisplayAtCoord(utils.Coordinate{X: col, Y: row})
+			}
+			rockFormationString += "\n"
+		}
+
+		first, ok := patterns[rockFormationString]
+		if !ok {
+			patterns[rockFormationString] = []int{i, currentHeight}
+		} else {
+			repeatingLength := i - first[0]
+			remainderLength := (num - first[0]) % repeatingLength
+			remainder := heights[i-repeatingLength+remainderLength] - heights[i-repeatingLength]
+			repeatingHeight := ((num - first[0] - remainderLength) / repeatingLength) * (currentHeight - first[1])
+			totalHeight := first[1] + remainder + repeatingHeight
+			return &repeatingPattern{
+				indexStart:      first[0],
+				indexEnd:        i,
+				heightAtStart:   first[1],
+				heightAtEnd:     currentHeight,
+				remainder:       remainder,
+				repeatingHeight: repeatingHeight,
+				totalHeight:     totalHeight,
+			}
 		}
 	}
-
-	return 0
+	return nil
 }
 
 func (c *chamber) jetBlastRock() {
